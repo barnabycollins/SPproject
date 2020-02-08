@@ -1,5 +1,6 @@
 struct universe {
-/*Put some appropriate things here*/
+    unsigned short width;
+    char grid[];
 };
 
 /*Do not modify the next seven lines*/
