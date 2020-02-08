@@ -29,3 +29,18 @@ void read_in_file(FILE *infile, struct universe *u) {
     }
     printf("\n");
 }
+
+void write_out_file(FILE *outfile, struct universe *u) {
+    char *grid = u->grid;
+    int cur = 0;
+
+    char output[] = "";
+
+    while (cur < strlen(grid)) {
+        fprintf(outfile, "%.*s\n", u->width, grid + cur);
+        cur += u->width;
+    }
+
+    fclose(outfile);
+    printf("Successfully wrote to file!");
+}
