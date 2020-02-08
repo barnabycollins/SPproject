@@ -7,6 +7,7 @@ void read_in_file(FILE *infile, struct universe *u) {
     char buffer[rowLength];
     char *grid = u->grid;
 
+    // todo check u is big enough for the file
     fgets(buffer, 512, infile);
     buffer[strlen(buffer)-1] = 0;
     strcpy(grid, buffer);
@@ -19,8 +20,6 @@ void read_in_file(FILE *infile, struct universe *u) {
         strcat(grid, buffer);
     }
 
-    fclose(infile);
-
     int cur = 0;
     printf("\nSuccessfully read in grid:\n");
     while(cur < strlen(grid)) {
@@ -28,6 +27,8 @@ void read_in_file(FILE *infile, struct universe *u) {
         cur += rowLength;
     }
     printf("\n");
+
+    fclose(infile);
 }
 
 void write_out_file(FILE *outfile, struct universe *u) {
@@ -43,4 +44,9 @@ void write_out_file(FILE *outfile, struct universe *u) {
 
     fclose(outfile);
     printf("Successfully wrote to file!");
+}
+
+int is_alive(struct universe *u, int column, int row) {
+    int index = row * u->width + column;
+    return (u->grid[index] == '*') ? 1 : 0;
 }

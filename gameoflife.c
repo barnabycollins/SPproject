@@ -20,6 +20,11 @@ int main(int argc, char argv[]){
 
   write_out_file(outfile,v);
 
+  printf("%d", is_alive(v, 3, 4));
+  printf("%d", is_alive(v, 2, 6));
+  printf("%d", is_alive(v, 0, 6));
+  printf("%d", is_alive(v, 6, 0));
+
   /* evolve(&v,will_be_alive);
   evolve(&v,will_be_alive);
   evolve(&v,will_be_alive);
