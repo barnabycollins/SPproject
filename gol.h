@@ -13,3 +13,5 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 void print_statistics(struct universe *u);
 /*You can modify after this line again*/
 
+int get_index(struct universe *u, int column, int row);
+int sum_surrounding(struct universe *u, int column, int row);

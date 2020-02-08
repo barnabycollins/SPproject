@@ -20,10 +20,17 @@ int main(int argc, char argv[]){
 
   write_out_file(outfile,v);
 
-  printf("%d", is_alive(v, 3, 4));
-  printf("%d", is_alive(v, 2, 6));
-  printf("%d", is_alive(v, 0, 6));
-  printf("%d", is_alive(v, 6, 0));
+  printf("\n%d", is_alive(v, 3, 4));          //1
+  printf("\n%d", is_alive(v, 2, 6));          //1
+  printf("\n%d", is_alive(v, 0, 6));          //0
+  printf("\n%d\n", is_alive(v, 6, 0));        //0
+
+  printf("\n%d\n", sum_surrounding(v, 3, 5)); //5
+
+  printf("\n%d", will_be_alive(v, 4, 5));     //1
+  printf("\n%d", will_be_alive(v, 3, 5));     //0
+  printf("\n%d", will_be_alive(v, 3, 7));     //1
+  printf("\n%d", will_be_alive(v, 5, 5));     //0
 
   /* evolve(&v,will_be_alive);
   evolve(&v,will_be_alive);

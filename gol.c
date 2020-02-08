@@ -47,6 +47,39 @@ void write_out_file(FILE *outfile, struct universe *u) {
 }
 
 int is_alive(struct universe *u, int column, int row) {
-    int index = row * u->width + column;
-    return (u->grid[index] == '*') ? 1 : 0;
+    return (u->grid[get_index(u, column, row)] == '*') ? 1 : 0;
+}
+
+int will_be_alive(struct universe *u, int column, int row) {
+    unsigned short sur_sum = sum_surrounding(u, column, row);
+
+    if (2 <= sur_sum && sur_sum <= 3) {
+        if (!is_alive(u, column, row) && sur_sum == 2) {
+            return 0;
+        }
+
+        return 1;
+    }
+
+    return 0;
+}
+
+// SUPPLEMENTARY FUNCTIONS
+
+int get_index(struct universe *u, int column, int row) {
+    return row * u->width + column;
+}
+
+int sum_surrounding(struct universe *u, int column, int row) {    
+    unsigned int total = 0;
+
+    for (int i=-1; i<=1; i++) {
+        for (int j=-1; j<=1; j++) {
+            if (i != 0 || j != 0) {
+                total += is_alive(u, column+i, row+j);
+            }
+        }
+    }
+
+    return total;
 }
