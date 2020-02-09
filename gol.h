@@ -1,5 +1,6 @@
 struct universe {
     unsigned short width;
+    unsigned int height;
     char grid[];
 };
 

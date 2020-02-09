@@ -20,6 +20,8 @@ void read_in_file(FILE *infile, struct universe *u) {
         strcat(grid, buffer);
     }
 
+    u->height = strlen(grid) / u->width;
+
     int cur = 0;
     printf("\nSuccessfully read in grid:\n");
     while(cur < strlen(grid)) {
@@ -83,16 +85,13 @@ int sum_surrounding(struct universe *u, int column, int row) {
 
 int sum_surrounding_torus(struct universe *u, int column, int row) {
 
-    // todo ensure int
-    unsigned short height = strlen(u->grid) / u->width;
-
     unsigned short total = 0;
 
     // todo make sure this works for invalid i and j
     for (int i=-1; i<=1; i++) {
         for (int j=-1; j<=1; j++) {
             if (i != 0 || j != 0) {
-                total += is_alive(u, (column+i)%u->width, (row+j)%height);
+                total += is_alive(u, (column+i) % u->width, (row+j) % u->height);
             }
         }
     }
