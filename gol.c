@@ -52,16 +52,12 @@ int is_alive(struct universe *u, int column, int row) {
 
 int will_be_alive(struct universe *u, int column, int row) {
     unsigned short sur_sum = sum_surrounding(u, column, row);
+    return check_alive(u, column, row, sur_sum);
+}
 
-    if (2 <= sur_sum && sur_sum <= 3) {
-        if (!is_alive(u, column, row) && sur_sum == 2) {
-            return 0;
-        }
-
-        return 1;
-    }
-
-    return 0;
+int will_be_alive_torus(struct universe *u, int column, int row) {
+    unsigned short sur_sum = sum_surrounding_torus(u, column, row);
+    return check_alive(u, column, row, sur_sum);
 }
 
 // SUPPLEMENTARY FUNCTIONS
@@ -71,8 +67,9 @@ int get_index(struct universe *u, int column, int row) {
 }
 
 int sum_surrounding(struct universe *u, int column, int row) {    
-    unsigned int total = 0;
+    unsigned short total = 0;
 
+    // todo make sure this works for invalid i and j
     for (int i=-1; i<=1; i++) {
         for (int j=-1; j<=1; j++) {
             if (i != 0 || j != 0) {
@@ -82,4 +79,35 @@ int sum_surrounding(struct universe *u, int column, int row) {
     }
 
     return total;
+}
+
+int sum_surrounding_torus(struct universe *u, int column, int row) {
+
+    // todo ensure int
+    unsigned short height = strlen(u->grid) / u->width;
+
+    unsigned short total = 0;
+
+    // todo make sure this works for invalid i and j
+    for (int i=-1; i<=1; i++) {
+        for (int j=-1; j<=1; j++) {
+            if (i != 0 || j != 0) {
+                total += is_alive(u, (column+i)%u->width, (row+j)%height);
+            }
+        }
+    }
+
+    return total;
+}
+
+int check_alive(struct universe *u, int column, int row, unsigned short sur_sum) {
+    if (2 <= sur_sum && sur_sum <= 3) {
+        if (sur_sum == 2 && !is_alive(u, column, row)) {
+            return 0;
+        }
+
+        return 1;
+    }
+
+    return 0;
 }

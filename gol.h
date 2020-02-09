@@ -15,3 +15,5 @@ void print_statistics(struct universe *u);
 
 int get_index(struct universe *u, int column, int row);
 int sum_surrounding(struct universe *u, int column, int row);
+int sum_surrounding_torus(struct universe *u, int column, int row);
+int check_alive(struct universe *u, int column, int row, unsigned short sur_sum);
