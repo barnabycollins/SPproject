@@ -1,7 +1,7 @@
 struct universe {
     unsigned short width;
     unsigned int height;
-    char grid[];
+    const char *grid;
 };
 
 /*Do not modify the next seven lines*/

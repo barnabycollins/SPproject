@@ -1,11 +1,18 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<string.h>
 #include"gol.h"
 
 void read_in_file(FILE *infile, struct universe *u) {
     unsigned short rowLength = 512;
     char buffer[rowLength];
-    char *grid = u->grid;
+
+    fseek(infile, 0L, SEEK_END);
+    int fsize = ftell(infile);
+    rewind(infile);
+
+    char *grid = malloc(fsize + 1);
+    // todo make sure malloc succeeded
 
     // todo check u is big enough for the file
     fgets(buffer, 512, infile);
@@ -20,6 +27,7 @@ void read_in_file(FILE *infile, struct universe *u) {
         strcat(grid, buffer);
     }
 
+    u->grid = grid;
     u->height = strlen(grid) / u->width;
 
     int cur = 0;
@@ -29,12 +37,10 @@ void read_in_file(FILE *infile, struct universe *u) {
         cur += rowLength;
     }
     printf("\n");
-
-    fclose(infile);
 }
 
 void write_out_file(FILE *outfile, struct universe *u) {
-    char *grid = u->grid;
+    const char *grid = u->grid;
     int cur = 0;
 
     char output[] = "";
@@ -60,6 +66,16 @@ int will_be_alive(struct universe *u, int column, int row) {
 int will_be_alive_torus(struct universe *u, int column, int row) {
     unsigned short sur_sum = sum_surrounding_torus(u, column, row);
     return check_alive(u, column, row, sur_sum);
+}
+
+void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row)) {
+    
+    
+    for (unsigned short i = 0; i < u->width; i++) {
+        for (unsigned int j = 0; j < u->height; j++) {
+            
+        }
+    }
 }
 
 // SUPPLEMENTARY FUNCTIONS
