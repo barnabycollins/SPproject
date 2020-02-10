@@ -33,11 +33,14 @@ int main(int argc, char argv[]){
 
 	printf("\n%d", will_be_alive_torus(&v, 10, 19)); //1
 
-	/* evolve(&v,will_be_alive);
 	evolve(&v,will_be_alive);
 	evolve(&v,will_be_alive);
 	evolve(&v,will_be_alive);
 	evolve(&v,will_be_alive);
-	write_out_file(stdout,&v); */
+	evolve(&v,will_be_alive);
+
+	FILE *out2 = fopen("./out2.txt", "w");
+	write_out_file(out2,&v);
+
 	return 0;
 }

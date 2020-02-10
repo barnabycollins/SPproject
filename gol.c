@@ -11,32 +11,31 @@ void read_in_file(FILE *infile, struct universe *u) {
     int fsize = ftell(infile);
     rewind(infile);
 
-    char *grid = malloc(fsize + 1);
+    printf("File is %d", fsize);
+
+    char *grid = malloc(fsize * sizeof(char));
     // todo make sure malloc succeeded
+    printf("Size %d", sizeof(grid));
 
     // todo check u is big enough for the file
     fgets(buffer, 512, infile);
     buffer[strlen(buffer)-1] = 0;
-    strcpy(grid, buffer);
+    grid = strcpy(grid, buffer);
     
     // length of a row
     u->width = rowLength = strlen(buffer);
 
     while(fgets(buffer, 512, infile)) {
         buffer[rowLength] = 0;
-        strcat(grid, buffer);
+        grid = strcat(grid, buffer);
     }
 
     u->grid = grid;
     u->height = strlen(grid) / u->width;
 
-    int cur = 0;
     printf("\nSuccessfully read in grid:\n");
-    while(cur < strlen(grid)) {
-        printf("%.*s\n", rowLength, grid + cur);
-        cur += rowLength;
-    }
-    printf("\n");
+
+    print_grid(u);
 }
 
 void write_out_file(FILE *outfile, struct universe *u) {
@@ -51,7 +50,7 @@ void write_out_file(FILE *outfile, struct universe *u) {
     }
 
     fclose(outfile);
-    printf("Successfully wrote to file!");
+    printf("\n\nSuccessfully wrote to file!");
 }
 
 int is_alive(struct universe *u, int column, int row) {
@@ -69,13 +68,20 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
 }
 
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row)) {
+    char *newgrid = malloc(strlen(u->grid));
     
+    newgrid = strcpy(newgrid, "");
     
-    for (unsigned short i = 0; i < u->width; i++) {
-        for (unsigned int j = 0; j < u->height; j++) {
-            
+    for (unsigned int i = 0; i < u->height; i++) {
+        for (unsigned short j = 0; j < u->width; j++) {
+            newgrid = strcat(newgrid, (*rule)(u, j, i) ? "*" : ".");
         }
     }
+
+    u->grid = strcpy(u->grid, "");
+
+    free(u->grid);
+    u->grid = newgrid;
 }
 
 // SUPPLEMENTARY FUNCTIONS
@@ -125,4 +131,16 @@ int check_alive(struct universe *u, int column, int row, unsigned short sur_sum)
     }
 
     return 0;
+}
+
+void print_grid(struct universe *u) {
+    printf("\n");
+
+    int cur = 0;
+    while(cur < strlen(u->grid)) {
+        printf("%.*s\n", u->width, u->grid + cur);
+        cur += u->width;
+    }
+
+    printf("\n");
 }

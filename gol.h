@@ -1,7 +1,7 @@
 struct universe {
     unsigned short width;
     unsigned int height;
-    const char *grid;
+    char *grid;
 };
 
 /*Do not modify the next seven lines*/
@@ -18,3 +18,4 @@ int get_index(struct universe *u, int column, int row);
 int sum_surrounding(struct universe *u, int column, int row);
 int sum_surrounding_torus(struct universe *u, int column, int row);
 int check_alive(struct universe *u, int column, int row, unsigned short sur_sum);
+void print_grid(struct universe *u);
