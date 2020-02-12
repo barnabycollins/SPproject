@@ -1,48 +1,64 @@
 #include<stdio.h>
-#include<string.h>
+#include<stdlib.h>
 #include"gol.h"
 
-// may need changing to int main(int argc, char *argv[]) {
-int main(int argc, char argv[]){
+int main(int argc, char *argv[]) {
 
-	FILE *gridfile = fopen("./glider.txt", "r");
+    FILE *in = stdin;
+    FILE *out = stdout;
 
-	struct universe v;
+    unsigned short print_stats = 0;
+    unsigned int number_of_generations = 5;
+    int (*alive_rule)(struct universe *u, int column, int row) = will_be_alive;
 
-	read_in_file(gridfile,&v);
+    if (argc > 1) {
+        unsigned short i = 1;
 
-    fclose(gridfile); // todo should this be done in read_in_file()?
+        while (i < argc) {
+            if (argv[i][0] == '-') {
+                switch(argv[i][1]) {
+                    case 'i':
+                        in = fopen(argv[i+1], "r");
+                        i++;
+                        break;
+                    
+                    case 'o':
+                        out = fopen(argv[i+1], "w");
+                        i++;
+                        break;
+                    
+                    case 'g':
+                        number_of_generations = atoi(argv[i+1]);
+                        i++;
+                        break;
+                    
+                    case 's':
+                        print_stats = 1;
+                        break;
+                    
+                    case 't':
+                        alive_rule = will_be_alive_torus;
+                        break;
+                }
+            }
+            i++;
+        }
+    }
 
-	FILE *outfile = fopen("./out.txt", "w");
 
-	write_out_file(outfile,&v);
+    struct universe v;
+    read_in_file(in,&v);
+    if (in != stdin) fclose(in);
 
-	printf("\n%d", is_alive(&v, 3, 4));              //1
-	printf("\n%d", is_alive(&v, 2, 6));              //1
-	printf("\n%d", is_alive(&v, 0, 6));              //0
-	printf("\n%d", is_alive(&v, 6, 0));              //0
-	printf("\n%d", is_alive(&v, -1, -4));            //0
-	printf("\n%d\n", is_alive(&v, 100, 200));        //0
+    for (unsigned int i=0; i<number_of_generations; i++) {
+        evolve(&v,alive_rule);
+    }
 
-	printf("\n%d\n", sum_surrounding(&v, 3, 5));     //5
+    write_out_file(out,&v);
 
-	printf("\n%d", will_be_alive(&v, 4, 5));         //1
-	printf("\n%d", will_be_alive(&v, 3, 5));         //0
-	printf("\n%d", will_be_alive(&v, 3, 7));         //1
-	printf("\n%d\n", will_be_alive(&v, 5, 5));       //0
+    if (print_stats == 1) {
+        print_statistics(&v);
+    }
 
-	printf("\n%d\n", will_be_alive_torus(&v, 10, 19)); //1
-
-	evolve(&v,will_be_alive);
-	evolve(&v,will_be_alive);
-	evolve(&v,will_be_alive);
-	evolve(&v,will_be_alive);
-	evolve(&v,will_be_alive);
-
-	print_statistics(&v);
-
-	FILE *out2 = fopen("./out2.txt", "w");
-	write_out_file(out2,&v);
-
-	return 0;
+    return 0;
 }

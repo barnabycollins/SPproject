@@ -3,6 +3,16 @@
 #include<string.h>
 #include"gol.h"
 
+// private function definitions
+int get_index(struct universe *u, int column, int row);
+int sum_surrounding(struct universe *u, int column, int row);
+int sum_surrounding_torus(struct universe *u, int column, int row);
+int check_alive(struct universe *u, int column, int row, unsigned short sur_sum);
+void print_grid(struct universe *u);
+float get_percent_alive(struct universe *u);
+int properMod(int a, int b);
+
+
 void read_in_file(FILE *infile, struct universe *u) {
     unsigned short rowLength = 512;
     char buffer[rowLength];
@@ -31,10 +41,6 @@ void read_in_file(FILE *infile, struct universe *u) {
     u->height = strlen(grid) / u->width;
     u->avg_alive = get_percent_alive(u);
     u->num_generations = 1;
-
-    printf("\nSuccessfully read in grid:\n");
-
-    print_grid(u);
 }
 
 void write_out_file(FILE *outfile, struct universe *u) {
@@ -47,9 +53,8 @@ void write_out_file(FILE *outfile, struct universe *u) {
         fprintf(outfile, "%.*s\n", u->width, grid + cur);
         cur += u->width;
     }
-
-    fclose(outfile);
-    printf("\n\nSuccessfully wrote to file!");
+    
+    if (outfile != stdout) fclose(outfile);
 }
 
 int is_alive(struct universe *u, int column, int row) {
@@ -89,7 +94,7 @@ void print_statistics(struct universe *u) {
     printf("%.3f%% of cells currently alive\n%.3f%% of cells alive on average", get_percent_alive(u), u->avg_alive);
 }
 
-// SUPPLEMENTARY FUNCTIONS
+// PRIVATE FUNCTIONS
 
 int get_index(struct universe *u, int column, int row) {
     return row * u->width + column;
@@ -114,11 +119,10 @@ int sum_surrounding_torus(struct universe *u, int column, int row) {
 
     unsigned short total = 0;
 
-    // todo make sure this works for invalid i and j
-    for (int i=-1; i<=1; i++) {
-        for (int j=-1; j<=1; j++) {
-            if (i != 0 || j != 0) {
-                total += is_alive(u, (column+i) % u->width, (row+j) % u->height);
+    for (short i=-1; i<=1; i++) {
+        for (short j=-1; j<=1; j++) {
+            if (!(i == 0 && j == 0)) {
+                total += is_alive(u, properMod(column+i, u->width), properMod(row+j, u->height));
             }
         }
     }
@@ -158,4 +162,8 @@ float get_percent_alive(struct universe *u) {
     }
 
     return 100.0 * ((float) total /(float) len);
+}
+
+int properMod(int a, int b) {
+    return (a%b+b)%b;
 }

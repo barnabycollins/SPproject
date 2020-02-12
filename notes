@@ -1,0 +1,8 @@
+Only output what you've been asked to output
+Check FAQs at https://duo.dur.ac.uk/webapps/blackboard/content/listContent.jsp?course_id=_85479_1&content_id=_5262356_1&mode=reset#contentListItem:_5520758_1
+Support stdin and stdout for file pointers (need to check this works more thoroughly)
+Decide whether to close files in functions or in main
+Consider GDB (GNU Debugger)
+    Use -g flag when compiling to include data for the debugger
+
+Ensure correct number types everywhere (unsigned, short etc)

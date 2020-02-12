@@ -15,10 +15,3 @@ int will_be_alive_torus(struct universe *u,  int column, int row);
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row));
 void print_statistics(struct universe *u);
 /*You can modify after this line again*/
-
-int get_index(struct universe *u, int column, int row);
-int sum_surrounding(struct universe *u, int column, int row);
-int sum_surrounding_torus(struct universe *u, int column, int row);
-int check_alive(struct universe *u, int column, int row, unsigned short sur_sum);
-void print_grid(struct universe *u);
-float get_percent_alive(struct universe *u);
