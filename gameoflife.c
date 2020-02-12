@@ -5,7 +5,7 @@
 // may need changing to int main(int argc, char *argv[]) {
 int main(int argc, char argv[]){
 
-	FILE *gridfile = fopen("./glider_alt.txt", "r");
+	FILE *gridfile = fopen("./glider.txt", "r");
 
 	struct universe v;
 
@@ -31,13 +31,15 @@ int main(int argc, char argv[]){
 	printf("\n%d", will_be_alive(&v, 3, 7));         //1
 	printf("\n%d\n", will_be_alive(&v, 5, 5));       //0
 
-	printf("\n%d", will_be_alive_torus(&v, 10, 19)); //1
+	printf("\n%d\n", will_be_alive_torus(&v, 10, 19)); //1
 
 	evolve(&v,will_be_alive);
 	evolve(&v,will_be_alive);
 	evolve(&v,will_be_alive);
 	evolve(&v,will_be_alive);
 	evolve(&v,will_be_alive);
+
+	print_statistics(&v);
 
 	FILE *out2 = fopen("./out2.txt", "w");
 	write_out_file(out2,&v);

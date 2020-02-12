@@ -11,11 +11,8 @@ void read_in_file(FILE *infile, struct universe *u) {
     int fsize = ftell(infile);
     rewind(infile);
 
-    printf("File is %d", fsize);
-
     char *grid = malloc(fsize * sizeof(char));
     // todo make sure malloc succeeded
-    printf("Size %d", sizeof(grid));
 
     // todo check u is big enough for the file
     fgets(buffer, 512, infile);
@@ -32,6 +29,8 @@ void read_in_file(FILE *infile, struct universe *u) {
 
     u->grid = grid;
     u->height = strlen(grid) / u->width;
+    u->avg_alive = get_percent_alive(u);
+    u->num_generations = 1;
 
     printf("\nSuccessfully read in grid:\n");
 
@@ -82,6 +81,12 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 
     free(u->grid);
     u->grid = newgrid;
+    u->avg_alive = (float) (get_percent_alive(u) + u->avg_alive * u->num_generations) / (float) (u->num_generations + 1);
+    u->num_generations += 1;
+}
+
+void print_statistics(struct universe *u) {
+    printf("%.3f%% of cells currently alive\n%.3f%% of cells alive on average", get_percent_alive(u), u->avg_alive);
 }
 
 // SUPPLEMENTARY FUNCTIONS
@@ -143,4 +148,14 @@ void print_grid(struct universe *u) {
     }
 
     printf("\n");
+}
+
+float get_percent_alive(struct universe *u) {
+    unsigned int len = strlen(u->grid);
+    unsigned int total = 0;
+    for (unsigned int i = 0; i<len; i++) {
+        total += (u->grid[i] == '*') ? 1 : 0;
+    }
+
+    return 100.0 * ((float) total /(float) len);
 }
