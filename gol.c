@@ -17,6 +17,7 @@ void read_in_file(FILE *infile, struct universe *u) {
     unsigned short rowLength = 512;
     char buffer[rowLength];
 
+    // todo this doesn't work for stdin
     fseek(infile, 0L, SEEK_END);
     int fsize = ftell(infile);
     rewind(infile);
@@ -51,8 +52,6 @@ void write_out_file(FILE *outfile, struct universe *u) {
         fprintf(outfile, "%.*s\n", u->width, grid + cur);
         cur += u->width;
     }
-    
-    if (outfile != stdout) fclose(outfile);
 }
 
 int is_alive(struct universe *u, int column, int row) {

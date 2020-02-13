@@ -55,6 +55,7 @@ int main(int argc, char *argv[]) {
     }
 
     write_out_file(out,&v);
+    if (out != stdout) fclose(out);
 
     if (print_stats == 1) {
         print_statistics(&v);
