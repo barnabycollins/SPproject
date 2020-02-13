@@ -45,9 +45,7 @@ void read_in_file(FILE *infile, struct universe *u) {
 
 void write_out_file(FILE *outfile, struct universe *u) {
     const char *grid = u->grid;
-    int cur = 0;
-
-    char output[] = "";
+    unsigned int cur = 0;
 
     while (cur < strlen(grid)) {
         fprintf(outfile, "%.*s\n", u->width, grid + cur);
@@ -145,7 +143,7 @@ int check_alive(struct universe *u, int column, int row, unsigned short sur_sum)
 void print_grid(struct universe *u) {
     printf("\n");
 
-    int cur = 0;
+    unsigned int cur = 0;
     while(cur < strlen(u->grid)) {
         printf("%.*s\n", u->width, u->grid + cur);
         cur += u->width;
