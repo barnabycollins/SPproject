@@ -17,25 +17,21 @@ void read_in_file(FILE *infile, struct universe *u) {
     unsigned short rowLength = 512;
     char buffer[rowLength];
 
-    // todo this doesn't work for stdin
-    fseek(infile, 0L, SEEK_END);
-    int fsize = ftell(infile);
-    rewind(infile);
-
-    char *grid = malloc(fsize * sizeof(char));
-    // todo make sure malloc succeeded
-
     // todo check u is big enough for the file
     fgets(buffer, 512, infile);
+    char *grid = malloc(strlen(buffer));
+    // todo make sure malloc succeeded
     buffer[strlen(buffer)-1] = 0;
-    grid = strcpy(grid, buffer);
+    strcpy(grid, buffer);
     
     // length of a row
-    u->width = rowLength = strlen(buffer);
+    u->width = strlen(buffer);
 
     while(fgets(buffer, 512, infile)) {
-        buffer[rowLength] = 0;
-        grid = strcat(grid, buffer);
+        grid = realloc(grid, strlen(grid) + strlen(buffer));
+        // todo make sure realloc succeeded
+        buffer[u->width] = 0;
+        strcat(grid, buffer);
     }
 
     u->grid = grid;
@@ -69,7 +65,7 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
 }
 
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row)) {
-    char *newgrid = malloc(strlen(u->grid));
+    char *newgrid = malloc(strlen(u->grid)+1);
     
     newgrid = strcpy(newgrid, "");
     
@@ -78,8 +74,6 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
             newgrid = strcat(newgrid, (*rule)(u, j, i) ? "*" : ".");
         }
     }
-
-    u->grid = strcpy(u->grid, "");
 
     free(u->grid);
     u->grid = newgrid;
