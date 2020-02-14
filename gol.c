@@ -11,16 +11,17 @@ int check_alive(struct universe *u, int column, int row, unsigned short sur_sum)
 void print_grid(struct universe *u);
 float get_percent_alive(struct universe *u);
 int properMod(int a, int b);
+void check_alloc(char *p);
 
 
 void read_in_file(FILE *infile, struct universe *u) {
     unsigned short rowLength = 512;
     char buffer[rowLength];
 
-    // todo check u is big enough for the file
     fgets(buffer, 512, infile);
     char *grid = malloc(strlen(buffer));
-    // todo make sure malloc succeeded
+    check_alloc(grid);
+
     buffer[strlen(buffer)-1] = 0;
     strcpy(grid, buffer);
     
@@ -29,7 +30,8 @@ void read_in_file(FILE *infile, struct universe *u) {
 
     while(fgets(buffer, 512, infile)) {
         grid = realloc(grid, strlen(grid) + strlen(buffer));
-        // todo make sure realloc succeeded
+        check_alloc(grid);
+
         buffer[u->width] = 0;
         strcat(grid, buffer);
     }
@@ -66,6 +68,7 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
 
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row)) {
     char *newgrid = malloc(strlen(u->grid)+1);
+    check_alloc(newgrid);
     
     newgrid = strcpy(newgrid, "");
     
@@ -157,4 +160,11 @@ float get_percent_alive(struct universe *u) {
 
 int properMod(int a, int b) {
     return (a%b+b)%b;
+}
+
+void check_alloc(char *p) {
+    if (p == NULL) {
+        fprintf(stderr, "Failed to allocate memory to store the universe grid!\n");
+        exit(1);
+    }
 }
