@@ -150,7 +150,7 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
  * and percentage of cells alive on average
  */
 void print_statistics(struct universe *u) {
-    printf("%.3f%% of cells currently alive\n%.3f%% of cells alive on average", get_percent_alive(u), u->avg_alive);
+    printf("%.3f%% of cells currently alive\n%.3f%% of cells alive on average\n", get_percent_alive(u), u->avg_alive);
 }
 
 
