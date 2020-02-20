@@ -53,7 +53,7 @@ void write_out_file(FILE *outfile, struct universe *u) {
 }
 
 int is_alive(struct universe *u, int column, int row) {
-    return (u->grid[get_index(u, column, row)] == '*') ? 1 : 0;
+    return u->grid[get_index(u, column, row)] == '*';
 }
 
 int will_be_alive(struct universe *u, int column, int row) {
@@ -91,7 +91,8 @@ void print_statistics(struct universe *u) {
 // PRIVATE FUNCTIONS
 
 int get_index(struct universe *u, int column, int row) {
-    return row * u->width + column;
+    int index = row * u->width + column;
+    return properMod(index, u->width * u->height);
 }
 
 int sum_surrounding(struct universe *u, int column, int row) {    
