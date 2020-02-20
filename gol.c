@@ -12,6 +12,8 @@ void print_grid(struct universe *u);
 float get_percent_alive(struct universe *u);
 int properMod(int a, int b);
 void check_alloc(char *p);
+short check_coords(struct universe *u, int column, int row);
+void error(char *message);
 
 // todo document functions
 // todo check over number types
@@ -37,10 +39,7 @@ void read_in_file(FILE *infile, struct universe *u) {
         grid = realloc(grid, strlen(grid) + strlen(buffer));
         check_alloc(grid);
         
-        if(strlen(buffer) != (unsigned) (u->width+1)) {
-            fprintf(stderr, "Error: input grid doesn't seem to be rectangular!\n");
-            exit(1);
-        }
+        if(strlen(buffer) != (unsigned) (u->width+1)) error("Input grid doesn't seem to be rectangular!");
 
         buffer[u->width] = 0;
         strcat(grid, buffer);
@@ -65,19 +64,21 @@ void write_out_file(FILE *outfile, struct universe *u) {
 int is_alive(struct universe *u, int column, int row) {
     // if we're outside the grid, return 0
     // (when this is called in torus mode the column and row will have already been modulo'd)
-    if (column < 0 || row < 0 || (unsigned) column >= u->width || (unsigned) row >= u->height) {
-        return 0;
-    }
+    if (check_coords(u, column, row)) return 0;
 
     return u->grid[get_index(u, column, row)] == '*';
 }
 
 int will_be_alive(struct universe *u, int column, int row) {
+    if (check_coords(u, column, row)) error("Co-ordinates lie outside the universe grid!");
+    
     unsigned short sur_sum = sum_surrounding(u, column, row);
     return check_alive(u, column, row, sur_sum);
 }
 
 int will_be_alive_torus(struct universe *u, int column, int row) {
+    if (check_coords(u, column, row)) error("Co-ordinates lie outside the universe grid!");
+    
     unsigned short sur_sum = sum_surrounding_torus(u, column, row);
     return check_alive(u, column, row, sur_sum);
 }
@@ -86,16 +87,23 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
     char *newgrid = malloc(strlen(u->grid)+1);
     check_alloc(newgrid);
     
+    // clear newgrid
     newgrid = strcpy(newgrid, "");
     
+    // for each row
     for (unsigned int i = 0; i < u->height; i++) {
+        // for each column
         for (unsigned short j = 0; j < u->width; j++) {
+            // evolve the current grid cell
             newgrid = strcat(newgrid, (*rule)(u, j, i) ? "*" : ".");
         }
     }
 
+    // free up the old grid and point the universe at the new one
     free(u->grid);
     u->grid = newgrid;
+
+    // update average alive information
     u->avg_alive = (float) (get_percent_alive(u) + u->avg_alive * u->num_generations) / (float) (u->num_generations + 1);
     u->num_generations += 1;
 }
@@ -107,15 +115,14 @@ void print_statistics(struct universe *u) {
 // PRIVATE FUNCTIONS
 
 int get_index(struct universe *u, int column, int row) {
-    int index = row * u->width + column;
-    return properMod(index, u->width * u->height);
+    return row * u->width + column;
 }
 
 int sum_surrounding(struct universe *u, int column, int row) {    
     unsigned short total = 0;
 
-    for (int i=-1; i<=1; i++) {
-        for (int j=-1; j<=1; j++) {
+    for (short i=-1; i<=1; i++) {
+        for (short j=-1; j<=1; j++) {
             if (i != 0 || j != 0) {
                 total += is_alive(u, column+i, row+j);
             }
@@ -180,7 +187,15 @@ int properMod(int a, int b) {
 
 void check_alloc(char *p) {
     if (p == NULL) {
-        fprintf(stderr, "Failed to allocate memory to store the universe grid!\n");
-        exit(1);
+        error("Failed to allocate memory to store the universe grid!");
     }
+}
+
+short check_coords(struct universe *u, int column, int row) {
+    return column < 0 || row < 0 || (unsigned) column >= u->width || (unsigned) row >= u->height;
+}
+
+void error(char *message) {
+    fprintf(stderr, "Error: %s\n", message);
+    exit(1);
 }
