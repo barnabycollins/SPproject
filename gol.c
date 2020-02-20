@@ -4,14 +4,14 @@
 #include"gol.h"
 
 // private function definitions
-int get_index(struct universe *u, int column, int row);
-int sum_surrounding(struct universe *u, int column, int row);
-int sum_surrounding_torus(struct universe *u, int column, int row);
-int check_alive(struct universe *u, int column, int row, unsigned short sur_sum);
+unsigned int get_index(struct universe *u, int column, int row);
+unsigned short sum_surrounding(struct universe *u, int column, int row);
+unsigned short sum_surrounding_torus(struct universe *u, int column, int row);
+unsigned short check_alive(struct universe *u, int column, int row, unsigned short sur_sum);
 float get_percent_alive(struct universe *u);
-int properMod(int a, int b);
+unsigned int properMod(int a, int b);
 void check_alloc(char *p);
-short check_coords(struct universe *u, int column, int row);
+unsigned short check_coords(struct universe *u, int column, int row);
 void error(char *message);
 
 // todo check over number types
@@ -162,7 +162,7 @@ void print_statistics(struct universe *u) {
  * Gets grid width from the current universe and
  * calculates the location of the cell in the given column and row
  */
-int get_index(struct universe *u, int column, int row) {
+unsigned int get_index(struct universe *u, int column, int row) {
     return row * u->width + column;
 }
 
@@ -171,7 +171,7 @@ int get_index(struct universe *u, int column, int row) {
  * surrounding the cell at the given co-ordinates
  * in the given (non-toroidal) universe
  */
-int sum_surrounding(struct universe *u, int column, int row) {    
+unsigned short sum_surrounding(struct universe *u, int column, int row) {    
     unsigned short total = 0;
 
     for (short i=-1; i<=1; i++) {
@@ -190,7 +190,7 @@ int sum_surrounding(struct universe *u, int column, int row) {
  * surrounding the cell at the given co-ordinates
  * in the given toroidal universe
  */
-int sum_surrounding_torus(struct universe *u, int column, int row) {
+unsigned short sum_surrounding_torus(struct universe *u, int column, int row) {
 
     unsigned short total = 0;
 
@@ -211,7 +211,7 @@ int sum_surrounding_torus(struct universe *u, int column, int row) {
  * - cell column and row
  * - number of live cells surrounding it
  */
-int check_alive(struct universe *u, int column, int row, unsigned short sur_sum) {
+unsigned short check_alive(struct universe *u, int column, int row, unsigned short sur_sum) {
     if (2 <= sur_sum && sur_sum <= 3) {
         if (sur_sum == 2 && !is_alive(u, column, row)) {
             return 0;
@@ -242,7 +242,7 @@ float get_percent_alive(struct universe *u) {
  * 
  * Used in replacement of C's % operator, which finds remainder
  */
-int properMod(int a, int b) {
+unsigned int properMod(int a, int b) {
     return (a%b+b)%b;
 }
 
@@ -263,7 +263,7 @@ void check_alloc(char *p) {
  * 0 if they do exist
  * 1 if they don't
  */
-short check_coords(struct universe *u, int column, int row) {
+unsigned short check_coords(struct universe *u, int column, int row) {
     return (column < 0 || row < 0 || (unsigned) column >= u->width || (unsigned) row >= u->height);
 }
 
