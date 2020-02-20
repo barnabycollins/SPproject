@@ -13,6 +13,9 @@ float get_percent_alive(struct universe *u);
 int properMod(int a, int b);
 void check_alloc(char *p);
 
+// todo document functions
+// todo check over number types
+
 
 void read_in_file(FILE *infile, struct universe *u) {
     char buffer[513];
@@ -51,11 +54,10 @@ void read_in_file(FILE *infile, struct universe *u) {
 }
 
 void write_out_file(FILE *outfile, struct universe *u) {
-    const char *grid = u->grid;
     unsigned int cur = 0;
 
-    while (cur < strlen(grid)) {
-        fprintf(outfile, "%.*s\n", u->width, grid + cur);
+    while (cur < strlen(u->grid)) {
+        fprintf(outfile, "%.*s\n", u->width, u->grid + cur);
         cur += u->width;
     }
 }
@@ -178,7 +180,7 @@ int properMod(int a, int b) {
 
 void check_alloc(char *p) {
     if (p == NULL) {
-        printf(stderr, "Failed to allocate memory to store the universe grid!\n");
+        fprintf(stderr, "Failed to allocate memory to store the universe grid!\n");
         exit(1);
     }
 }
