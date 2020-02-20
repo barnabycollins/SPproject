@@ -58,7 +58,7 @@ void write_out_file(FILE *outfile, struct universe *u) {
 int is_alive(struct universe *u, int column, int row) {
     // if we're outside the grid, return 0
     // (when this is called in torus mode the column and row will have already been modulo'd)
-    if (column >= u->width || column < 0 || row >= u->height || row < 0) {
+    if (column < 0 || row < 0 || (unsigned) column >= u->width || (unsigned) row >= u->height) {
         return 0;
     }
 
