@@ -15,24 +15,29 @@ void check_alloc(char *p);
 
 
 void read_in_file(FILE *infile, struct universe *u) {
-    unsigned short rowLength = 512;
-    char buffer[rowLength];
+    char buffer[513];
 
-    fgets(buffer, 512, infile);
+    fgets(buffer, 513, infile);
+    
+    // store length of a row
+    u->width = strlen(buffer)-1;
+
     char *grid = malloc(strlen(buffer));
     check_alloc(grid);
 
-    // do an initial iteration, copying the buffer into the grid and getting the width of the rows
-    buffer[strlen(buffer)-1] = 0;
+    // do an initial iteration, copying the buffer into grid
+    buffer[u->width] = 0;
     strcpy(grid, buffer);
-    
-    // store length of a row
-    u->width = strlen(buffer);
 
     // iterate over the rest of the lines of the file
     while(fgets(buffer, 513, infile)) {
         grid = realloc(grid, strlen(grid) + strlen(buffer));
         check_alloc(grid);
+        
+        if(strlen(buffer) != (unsigned) (u->width+1)) {
+            fprintf(stderr, "Error: input grid doesn't seem to be rectangular!\n");
+            exit(1);
+        }
 
         buffer[u->width] = 0;
         strcat(grid, buffer);
