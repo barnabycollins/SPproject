@@ -1,6 +1,24 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include"gol.h"
+
+/**
+ * Prints the given error to stderr and exits
+ */
+void main_error(char *message) {
+    fprintf(stderr, "Error: %s\n", message);
+    exit(1);
+}
+
+void arg_error(char *arg) {
+    char *msg = malloc(64);
+    if (msg != NULL) {
+        snprintf(msg, 64, "Unrecognised switch: %s", arg);
+        main_error(msg);
+    }
+    main_error("Unrecognised switch detected!");
+}
 
 int main(int argc, char *argv[]) {
 
@@ -15,21 +33,27 @@ int main(int argc, char *argv[]) {
         unsigned short i = 1;
 
         while (i < argc) {
-            if (argv[i][0] == '-') {
+            if (argv[i][0] == '-' && strlen(argv[i]) == 2) {
                 switch(argv[i][1]) {
                     case 'i':
-                        in = fopen(argv[i+1], "r");
-                        i++;
+                        if ((in = fopen(argv[i+1], "r"))) {
+                            i++;
+                        }
+                        else {
+                            main_error("Given input file doesn't exist!");
+                        }
                         break;
                     
                     case 'o':
-                        out = fopen(argv[i+1], "w");
                         i++;
+                        out = fopen(argv[i], "w");
                         break;
                     
                     case 'g':
-                        number_of_generations = atoi(argv[i+1]);
                         i++;
+                        char *endptr;
+                        number_of_generations = strtol(argv[i], &endptr, 10);
+                        if (endptr == argv[i]) main_error("Invalid number of generations!");
                         break;
                     
                     case 's':
@@ -39,7 +63,14 @@ int main(int argc, char *argv[]) {
                     case 't':
                         alive_rule = will_be_alive_torus;
                         break;
+                    
+                    default:
+                        arg_error(argv[i]);
+                        break;
                 }
+            }
+            else {
+                arg_error(argv[i]);
             }
             i++;
         }
@@ -47,19 +78,15 @@ int main(int argc, char *argv[]) {
 
 
     struct universe v;
-    read_in_file(in,&v);
+    read_in_file(in, &v);
     if (in != stdin) fclose(in);
 
-    for (unsigned int i=0; i<number_of_generations; i++) {
-        evolve(&v,alive_rule);
-    }
+    for (unsigned int i=0; i<number_of_generations; i++) evolve(&v, alive_rule);
 
     write_out_file(out,&v);
     if (out != stdout) fclose(out);
 
-    if (print_stats == 1) {
-        print_statistics(&v);
-    }
+    if (print_stats == 1) print_statistics(&v);
 
     return 0;
 }
