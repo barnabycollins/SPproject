@@ -22,13 +22,15 @@ void read_in_file(FILE *infile, struct universe *u) {
     char *grid = malloc(strlen(buffer));
     check_alloc(grid);
 
+    // do an initial iteration, copying the buffer into the grid and getting the width of the rows
     buffer[strlen(buffer)-1] = 0;
     strcpy(grid, buffer);
     
-    // length of a row
+    // store length of a row
     u->width = strlen(buffer);
 
-    while(fgets(buffer, 512, infile)) {
+    // iterate over the rest of the lines of the file
+    while(fgets(buffer, 513, infile)) {
         grid = realloc(grid, strlen(grid) + strlen(buffer));
         check_alloc(grid);
 
@@ -36,6 +38,7 @@ void read_in_file(FILE *infile, struct universe *u) {
         strcat(grid, buffer);
     }
 
+    // write info into the given universe
     u->grid = grid;
     u->height = strlen(grid) / u->width;
     u->avg_alive = get_percent_alive(u);
@@ -53,6 +56,12 @@ void write_out_file(FILE *outfile, struct universe *u) {
 }
 
 int is_alive(struct universe *u, int column, int row) {
+    // if we're outside the grid, return 0
+    // (when this is called in torus mode the column and row will have already been modulo'd)
+    if (column >= u->width || column < 0 || row >= u->height || row < 0) {
+        return 0;
+    }
+
     return u->grid[get_index(u, column, row)] == '*';
 }
 
@@ -98,7 +107,6 @@ int get_index(struct universe *u, int column, int row) {
 int sum_surrounding(struct universe *u, int column, int row) {    
     unsigned short total = 0;
 
-    // todo make sure this works for invalid i and j
     for (int i=-1; i<=1; i++) {
         for (int j=-1; j<=1; j++) {
             if (i != 0 || j != 0) {
