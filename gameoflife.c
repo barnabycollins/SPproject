@@ -11,6 +11,9 @@ void main_error(char *message) {
     exit(1);
 }
 
+/**
+ * Called when there's an issue with one of the command line arguments
+ */
 void arg_error(char *arg) {
     char *msg = malloc(64);
     if (msg != NULL) {
@@ -20,6 +23,9 @@ void arg_error(char *arg) {
     main_error("Unrecognised switch detected!");
 }
 
+/**
+ * Entrypoint for this program
+ */
 int main(int argc, char *argv[]) {
 
     FILE *in = stdin;
