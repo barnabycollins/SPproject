@@ -178,7 +178,7 @@ int properMod(int a, int b) {
 
 void check_alloc(char *p) {
     if (p == NULL) {
-        fprintf(stderr, "Failed to allocate memory to store the universe grid!\n");
+        printf(stderr, "Failed to allocate memory to store the universe grid!\n");
         exit(1);
     }
 }
