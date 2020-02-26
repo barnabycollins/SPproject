@@ -30,8 +30,11 @@ int main(int argc, char *argv[]) {
 
     FILE *in = stdin;
     FILE *out = stdout;
+    char *inname = "";
+    char *outname = "";
 
     unsigned short print_stats = 0;
+    short gens_set = 0;
     unsigned int number_of_generations = 5;
     int (*alive_rule)(struct universe *u, int column, int row) = will_be_alive;
 
@@ -42,24 +45,31 @@ int main(int argc, char *argv[]) {
             if (argv[i][0] == '-' && strlen(argv[i]) == 2) {
                 switch(argv[i][1]) {
                     case 'i':
-                        if ((in = fopen(argv[i+1], "r"))) {
-                            i++;
-                        }
-                        else {
-                            main_error("Given input file doesn't exist!");
-                        }
+                        i++;
+                        char *newin = argv[i];
+                        if (strcmp(inname, "") != 0 && strcmp(newin, inname) != 0) main_error("Two different inputs specified!");
+                        inname = newin;
                         break;
                     
                     case 'o':
                         i++;
-                        out = fopen(argv[i], "w");
+                        char *newout = argv[i];
+                        if (strcmp(outname, "") != 0 && strcmp(newout, outname) != 0) main_error("Two different outputs specified!");
+                        outname = newout;
                         break;
                     
                     case 'g':
                         i++;
                         char *endptr;
-                        number_of_generations = strtol(argv[i], &endptr, 10);
-                        if (endptr == argv[i]) main_error("Invalid number of generations!");
+                        long int value = strtol(argv[i], &endptr, 10);
+                        if (endptr == argv[i]) value = -1;
+                        if (value < 0) {
+                            main_error("Invalid number of generations!");
+                        }
+                        unsigned int newgens = (unsigned) value;
+                        if (gens_set == 1 && number_of_generations != newgens) main_error("Two different values for number of generations given!");
+                        gens_set = 1;
+                        number_of_generations = newgens;
                         break;
                     
                     case 's':
@@ -82,6 +92,14 @@ int main(int argc, char *argv[]) {
         }
     }
 
+
+    if (strcmp(inname, "") != 0 && !(in = fopen(inname, "r"))) {
+        main_error("Given input file doesn't exist!");
+    } 
+
+    if (strcmp(outname, "") != 0 && !(out = fopen(outname, "w"))) {
+        main_error("Failed to open output file for writing!");
+    }
 
     struct universe v;
     read_in_file(in, &v);
