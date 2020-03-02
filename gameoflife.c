@@ -17,7 +17,7 @@ void main_error(char *message) {
 void arg_error(char *arg) {
     char *msg = malloc(64);
     if (msg != NULL) {
-        snprintf(msg, 64, "Unrecognised switch: %s", arg);
+        snprintf(msg, 64, "Unrecognised switch: %.40s", arg);
         main_error(msg);
     }
     main_error("Unrecognised switch detected!");
