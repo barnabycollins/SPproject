@@ -46,6 +46,12 @@ void read_in_file(FILE *infile, struct universe *u) {
         strcat(grid, buffer);
     }
 
+    for (unsigned int i = 0; i < strlen(grid); i++) {
+        if (grid[i] != '*' && grid[i] != '.') {
+            error("Unrecognised symbol in input file!");
+        }
+    }
+
     // write info into the given universe
     u->grid = grid;
     u->height = strlen(grid) / u->width;
